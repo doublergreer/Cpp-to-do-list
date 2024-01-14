@@ -13,6 +13,7 @@ class Element
         Element();
         Element(string name);
         Element(string name, string description);
+        Element(string name, string description, int priority_level);
         
         //setters and getters
         void setName(string name);
@@ -27,8 +28,19 @@ class Element
         //linked list
         void setNextElement(Element* next);
         Element* getNextElement();
+        void appendElement (Element* e);
+
+        //UI functions
+        void welcome(string username, bool firstTime);
         void prettyPrint();
-        
+        void printMenu();
+        void addFirstItem();
+        void addItem();
+
+        //csv i/o functions
+        //callee is assumed to be head of LL
+        string readData(string file_name);
+        void writeData(string file_name, string username);
     
 
     private:
