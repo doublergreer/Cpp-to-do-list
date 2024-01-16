@@ -31,11 +31,14 @@ class Element
         void appendElement (Element* e);
 
         //UI functions
-        void welcome(string username, bool firstTime);
+        int welcome(string username, bool firstTime);
         void prettyPrint();
-        void printMenu();
+        int printMenu();
         void addFirstItem();
         void addItem();
+        void removeItem(int num);
+        Element* findElementByNumber(int num);
+        void expandDetails(int num);
 
         //csv i/o functions
         //callee is assumed to be head of LL

@@ -74,15 +74,16 @@ void Element::appendElement (Element* e) {
     temp->next_ = e;
 }
 
-void Element::welcome(string username, bool firstTime) {
+int Element::welcome(string username, bool firstTime) {
     if (firstTime) {
         cout << endl << "Hello " << username << ", welcome to your new to-do list." << endl;
-        printMenu();
+        return printMenu();
     }
 
     else {
         cout << endl << username << ", welcome back to your to-do list." << endl;
         prettyPrint();
+        return printMenu();
     }
 }
 
@@ -99,10 +100,10 @@ void Element::prettyPrint() {
     */
 
     while (temp) {
-        cout << i << ". " << temp->name_ << "\t" << temp->description_;
+        cout << i << ". " << temp->name_.substr(0,8) << "\t" << temp->description_.substr(0,4);
         
-        if (!temp->priority_level_) cout << "\t\t\t-" << endl;
-        else cout << "\t\t\t" << temp->priority_level_ << endl;
+        if (!temp->priority_level_) cout << "...\t\t\t-" << endl;
+        else cout << "...\t\t\t" << temp->priority_level_ << endl;
 
         temp = temp->next_;
         i++;
@@ -112,7 +113,7 @@ void Element::prettyPrint() {
 }
 
 
-void Element::printMenu() {
+int Element::printMenu() {
     int menu = 0;
     
     while (menu != 5){
@@ -132,24 +133,50 @@ void Element::printMenu() {
             if (this->name_ != "") addItem();
             else addFirstItem();
         }
-        else if (menu == 2);
-        else if (menu == 3) {
+        else if (menu == 2) {
+            int item;
+
             cout << "Enter item number:\t";
+            cin >> item;
+
+            this->removeItem(item);
+        }
+        else if (menu == 3) {
+            int item;
+
+            cout << "Enter item number:\t";
+            cin >> item;
+
+            this->expandDetails(item);
         }
         else if (menu == 4) prettyPrint();
     }
+
+    string cancel = "";
+
+    cout << endl << "Saving list to hard drive. Type 'n' to cancel.";
+    cin >> cancel;
+
+    if (cancel != "n") return 1;
+
+    return 0;
 }
 
 void Element::addFirstItem() {
 
+    cin.ignore(256, '\n');
+
     cout << "-New Item-" << endl;
     cout << "Enter item name:";
-    cin >> name_;
+    
+    getline(cin, name_);
+
+    // cin.ignore(256, '\n');
 
     cout << endl;
 
     cout << "Enter item description:";
-    cin >> description_;
+    getline(cin, description_);
 
     cout << endl;
 
@@ -165,14 +192,16 @@ void Element::addItem() {
     string name, description;
     int priority;
 
+    cin.ignore(256, '\n');
+
     cout << "-New Item-" << endl;
     cout << "Enter item name:";
-    cin >> name;
+    getline(cin, name);
 
     cout << endl;
 
     cout << "Enter item description:";
-    cin >> description;
+    getline(cin, description);
 
     cout << endl;
 
@@ -185,6 +214,50 @@ void Element::addItem() {
     appendElement(newItem);
 
     prettyPrint();
+}
+
+void Element::removeItem(int num) {
+    //add LL destructor?
+    if (num == 1) return;
+
+    Element* item = this->findElementByNumber(num);
+    Element* prev = this->findElementByNumber(num-1);
+
+    prev->next_ = item->next_;
+
+    delete item;
+
+    this->prettyPrint();
+}
+
+Element* Element::findElementByNumber(int num) {
+    Element* temp = this;
+    int i = 1;
+
+    while (temp) {
+        if (i == num) return temp;
+
+        temp = temp->next_;
+        i++;
+    }
+
+    return nullptr;
+}
+
+void Element::expandDetails(int num) {
+    Element* task = findElementByNumber(num);
+
+    if (task == nullptr) {
+        cout << "Invalid Element" << endl;
+        return;
+    }
+    cout << endl << " ------------------------------------------------" << endl;
+    cout << endl << "\tTask Name: " << task->name_ << endl;
+
+    cout << endl << "\tDescription: " << task->description_ << endl;
+
+    cout << endl << "\tPriority Level: " << task->priority_level_ << endl;
+    cout << endl << " ------------------------------------------------" << endl;
 }
 
 
